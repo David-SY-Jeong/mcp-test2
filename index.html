@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Figma Dark Mode & Bun WebSocket Projects</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f172a 100%);
+            min-height: 100vh;
+            color: #f8fafc;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .project-card {
+            background: linear-gradient(145deg, #1f2937, #111827);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .project-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #f1f5f9;
+        }
+
+        .project-description {
+            color: #94a3b8;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .features-list li {
+            color: #e2e8f0;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .features-list li::before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .tech-tag {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .project-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(145deg, #3b82f6, #1d4ed8);
+            color: white;
+            box-shadow: 
+                0 4px 8px rgba(59, 130, 246, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(145deg, #2563eb, #1e40af);
+            transform: translateY(-1px);
+            box-shadow: 
+                0 6px 12px rgba(59, 130, 246, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(145deg, #4b5563, #374151);
+            color: #e2e8f0;
+            box-shadow: 
+                0 4px 8px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(145deg, #6b7280, #4b5563);
+            color: #f1f5f9;
+            transform: translateY(-1px);
+            box-shadow: 
+                0 6px 12px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+        }
+
+        .footer a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @keyframes fadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .project-links {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🎨 Figma Dark Mode & Bun WebSocket</h1>
+            <p>Modern web development projects featuring dark theme design and high-performance real-time communication</p>
+        </header>
+
+        <div class="projects-grid">
+            <!-- Figma Popup Button Project -->
+            <div class="project-card">
+                <h2 class="project-title">🌙 Figma Popup Button Dark Mode</h2>
+                <p class="project-description">
+                    Figma 디자인을 완벽하게 재현한 다크모드 팝업 버튼. 글래스모피즘 효과와 그라데이션을 활용한 모던한 UI 구현.
+                </p>
+                
+                <ul class="features-list">
+                    <li>정확한 Figma 스펙 구현 (65px × 44px)</li>
+                    <li>다크모드 글래스모피즘 디자인</li>
+                    <li>인터랙티브 드롭다운 메뉴</li>
+                    <li>반응형 디자인 & 키보드 접근성</li>
+                    <li>부드러운 애니메이션 효과</li>
+                </ul>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">HTML5</span>
+                    <span class="tech-tag">CSS3</span>
+                    <span class="tech-tag">JavaScript</span>
+                    <span class="tech-tag">Glassmorphism</span>
+                </div>
+
+                <div class="project-links">
+                    <a href="./figma-popup-button.html" class="btn btn-primary">
+                        🚀 Live Demo
+                    </a>
+                    <a href="https://github.com/David-SY-Jeong/mcp-test2/blob/main/figma-popup-button.html" class="btn btn-secondary">
+                        📄 Source Code
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bun WebSocket Project -->
+            <div class="project-card">
+                <h2 class="project-title">⚡ Bun WebSocket Chat</h2>
+                <p class="project-description">
+                    Bun 런타임을 활용한 고성능 WebSocket 서버와 React 클라이언트로 구성된 실시간 채팅 애플리케이션.
+                </p>
+                
+                <ul class="features-list">
+                    <li>Bun 런타임 기반 고성능 서버</li>
+                    <li>실시간 메시지 송수신</li>
+                    <li>자동 재연결 & 하트비트</li>
+                    <li>사용자 관리 & 메시지 히스토리</li>
+                    <li>Next.js 15 + React 19 클라이언트</li>
+                </ul>
+
+                <div class="tech-stack">
+                    <span class="tech-tag">Bun</span>
+                    <span class="tech-tag">WebSocket</span>
+                    <span class="tech-tag">Next.js 15</span>
+                    <span class="tech-tag">React 19</span>
+                    <span class="tech-tag">TypeScript</span>
+                    <span class="tech-tag">Tailwind CSS</span>
+                </div>
+
+                <div class="project-links">
+                    <a href="https://github.com/David-SY-Jeong/mcp-test2#-bun-websocket-chat" class="btn btn-primary">
+                        📖 Documentation
+                    </a>
+                    <a href="https://github.com/David-SY-Jeong/mcp-test2" class="btn btn-secondary">
+                        💻 GitHub Repo
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>
+                Made with ❤️ by <a href="https://github.com/David-SY-Jeong">David-SY-Jeong</a> | 
+                <a href="https://github.com/David-SY-Jeong/mcp-test2">View on GitHub</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Page load animation
+        window.addEventListener('load', function() {
+            console.log('🎨 Figma Dark Mode & Bun WebSocket Projects loaded!');
+            console.log('✨ Click on the Live Demo to see the Figma popup button in action!');
+        });
+
+        // Add subtle parallax effect to cards
+        document.addEventListener('mousemove', function(e) {
+            const cards = document.querySelectorAll('.project-card');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+
+            cards.forEach(card => {
+                const rect = card.getBoundingClientRect();
+                const cardX = (rect.left + rect.width / 2) / window.innerWidth;
+                const cardY = (rect.top + rect.height / 2) / window.innerHeight;
+
+                const deltaX = (mouseX - cardX) * 5;
+                const deltaY = (mouseY - cardY) * 5;
+
+                card.style.transform = `translate(${deltaX}px, ${deltaY}px) translateY(-2px)`;
+            });
+        });
+
+        // Reset card positions when mouse leaves
+        document.addEventListener('mouseleave', function() {
+            const cards = document.querySelectorAll('.project-card');
+            cards.forEach(card => {
+                card.style.transform = '';
+            });
+        });
+    </script>
+</body>
+</html>
